@@ -1,3 +1,3 @@
-(() => {
-  alert('haha it works again')
-})();
+import navbar from './navbar';
+import app from './app';
+

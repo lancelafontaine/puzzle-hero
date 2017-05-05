@@ -1,0 +1,28 @@
+$navbar-height: 6rem;
+$navbar-border-height: 5px;
+
+#navbar {
+  width: 100%;
+  height: $navbar-height;
+  background-color: $concordia-red;
+  border-bottom: $navbar-border-height solid $concordia-gold;
+  color: $white;
+
+  #navbar-title {
+    position: absolute;
+    top: 0;
+    left: 2rem;
+    height: $navbar-height;
+    font-size: 4rem;
+  }
+  .navbar-links {
+    position: absolute;
+    top: 0;
+    right: 2rem;
+    height: $navbar-height;
+    line-height: $navbar-height;
+  }
+
+}
+
+

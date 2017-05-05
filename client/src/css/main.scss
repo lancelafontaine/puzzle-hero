@@ -1,5 +1,2 @@
-$black: #000000;
-
-body {
-  background-color: $black;
-}
+@import 'variables';
+@import 'navbar';
