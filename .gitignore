@@ -1,2 +1,4 @@
 /server/target
 /client/npm-debug.log
+/client/dist
+node_modules
