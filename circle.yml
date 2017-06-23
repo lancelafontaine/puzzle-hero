@@ -1,0 +1,10 @@
+dependencies:
+  override:
+    - npm config set registry http://registry.npmjs.org/
+    - cd client && npm install
+
+test:
+  override:
+    - cd client && npm run lint
+    - cd client && npm run test
+# - npm install -g codecov && codecov -t c9cdaf71-c29f-417d-ac6b-15f4742e4b87
