@@ -15,9 +15,6 @@
 import Global from '@/global'
 export default {
   name: 'navbar',
-  data () {
-    return {}
-  },
   computed: {
     loginMessage () {
       if (Global.isLoggedIn) {
