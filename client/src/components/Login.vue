@@ -68,8 +68,6 @@ export default {
         }
       }
       console.log(formValues)
-      // restFactory.login((res) => {})
-      // restFactory.register((res) => {})
     },
     changeFormType (e) {
       const idClicked = e.target.id
