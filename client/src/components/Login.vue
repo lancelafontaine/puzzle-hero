@@ -11,7 +11,9 @@
         <div id="login-form" class="column column-50 column-offset-25">
           <form v-on:submit.prevent="onSubmit($event)">
             <label for="username"><a>SCS Competitions Slack</a> Username</label>
-            <input type="text" placeholder="1337haxxorz" name="username" id="username" required />
+            <input type="text" placeholder="1337haxxorz" name="username" id="username" list="slack-users-list" required />
+            <datalist id="slack-users-list">
+            </datalist>
             <div class="row" v-if="showingRegisterForm">
               <div class="column">
                 <label for="fname">First Name</label>
@@ -53,7 +55,13 @@ export default {
     populateSlackUsers () {
       restFactory.slackUsers((res) => {
         if (res.status === 200) {
-          console.log(res)
+          const slackUsers = res.data.data
+          let optionsListString = ''
+          slackUsers.forEach((user, index) => {
+            let optionString = '<option value="' + user.username + '" />'
+            optionsListString += optionString
+          })
+          document.getElementById('slack-users-list').innerHTML = optionsListString
         } else {
           global.defaultUserError(res)
         }
