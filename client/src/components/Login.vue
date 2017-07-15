@@ -33,16 +33,32 @@
 </template>
 
 <script>
+import restFactory from '@/js/restFactory'
+import global from '@/global'
+
 export default {
   name: 'login',
   data () {
     return {
       email: 'competitions.scs@ecaconcordia.ca',
       showingLoginForm: true,
-      showingRegisterForm: false
+      showingRegisterForm: false,
+      slackUsers: []
     }
   },
+  mounted () {
+    this.populateSlackUsers()
+  },
   methods: {
+    populateSlackUsers () {
+      restFactory.slackUsers((res) => {
+        if (res.status === 200) {
+          console.log(res)
+        } else {
+          global.defaultUserError(res)
+        }
+      })
+    },
     onSubmit (e) {
       const formValues = {}
       const inputs = e.target.elements
