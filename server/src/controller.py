@@ -17,7 +17,7 @@ def get_slack_users(request):
                 formatted_slack_user = {
                     'username': slack_user['name'],
                     'realname': slack_user['profile']['real_name_normalized'],
-                    'avatar': slack_user['profile']['image_32']
+                    'avatar': slack_user['profile']['image_192']
                 }
                 formatted_slack_users.append(formatted_slack_user)
         return json(ok(formatted_slack_users))
