@@ -1,7 +1,8 @@
 import controller
 import json
 import pytest
-import rest_service
+import requests
+from rest_service import slack_users
 from sanic.response import HTTPResponse
 
 def test_get_heartbeat():
@@ -12,12 +13,14 @@ def test_get_heartbeat():
 
 def test_get_slack_users_slack_api_error(monkeypatch):
     class SlackUsersMock:
+        def __init__(*args, **kwargs):
+            return
         def json(self):
             return {
                 'ok': False,
                 'members': []
             }
-    rest_service.slack_users = SlackUsersMock
+    monkeypatch.setattr(requests, 'get', SlackUsersMock)
     assert type(controller.get_slack_users()) is HTTPResponse
     assert controller.get_slack_users().status == 504
     data = json.loads(controller.get_slack_users().body)
@@ -25,12 +28,14 @@ def test_get_slack_users_slack_api_error(monkeypatch):
 
 def test_get_slack_users_no_users(monkeypatch):
     class SlackUsersMock:
+        def __init__(*args, **kwargs):
+            return
         def json(self):
             return {
                 'ok': True,
                 'members': []
             }
-    rest_service.slack_users = SlackUsersMock
+    monkeypatch.setattr(requests, 'get', SlackUsersMock)
     assert type(controller.get_slack_users()) is HTTPResponse
     assert controller.get_slack_users().status == 200
     data = json.loads(controller.get_slack_users().body)
@@ -38,6 +43,8 @@ def test_get_slack_users_no_users(monkeypatch):
 
 def test_get_slack_users_filters_deleted_and_blacklisted(monkeypatch):
     class SlackUsersMock:
+        def __init__(*args, **kwargs):
+            return
         def json(self):
             return {
                 'ok': True,
@@ -68,7 +75,7 @@ def test_get_slack_users_filters_deleted_and_blacklisted(monkeypatch):
                     }
                 ]
             }
-    rest_service.slack_users = SlackUsersMock
+    monkeypatch.setattr(requests, 'get', SlackUsersMock)
     assert type(controller.get_slack_users()) is HTTPResponse
     assert controller.get_slack_users().status == 200
     data = json.loads(controller.get_slack_users().body)
