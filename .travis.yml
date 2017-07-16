@@ -1,0 +1,19 @@
+language: python
+python:
+- '3.6'
+- 3.6-dev
+- 3.7-dev
+env:
+- NODE_VERSION="6.11.1"
+before_install:
+- nvm install $NODE_VERSION
+install:
+- cd client && npm install && cd ..
+- cd server && pip install -r requirements.txt && cd ..
+script:
+- pytest
+- cd client && npm run lint && npm run test && cd ..
+- codecov
+notifications:
+  slack:
+    secure: RVJVoD81EyTasU9+T3DvvhpFfne/KzpAP5VeZiYJ/Y83a/xuB2dkRweYYBX5Mhw6b8xh5Jp5T/yqJoQ1YD27zrzpIV/U+pdrrShUIKdt6FRAPiYeBuWJASNnFEoY1j++AHmkXxFfASdPwMQNAaNN8g6ifi2VnrWrc1L3D2LcT9U6sUc6F8Jf/W8pNqpsV4GUvmX5p1p9b3t3IfrLXnMm6JBm5G5UINhKPWvhehBB2S/jN+cxCquPxpQNrMd8vkpO0fVoUucG2DDcyqaV50THas8Ta72DLiekfgZ9EBgmBPrgJ92BfwqzehP4uYzJhU0iCvqZ+UOd/af7JWslPKkHT7zKH2lGKueByN6e1GX5mUKg8MzKOuqdlBTucc7pMsLxKo2yUFTZxlhGsuttwe/9JdN5AuaTCFzKrgvs4jRMLl14Ofkn8+d5RRP/kc/jFKcafQ+5zkPWQgcSGd7N3/hvKFvKlyYLMqU94AI0kbFVMw3HYkEQWgmZjd6HiLnOIagFBXYN3ytzFc/2ttZQWeVHKfI3Y9Bs3ZC1Fi7lCCNfcg8RDU8sm2CpBXAZQvzJq4XfIYfYCNg45MerSkR+3YoEzhVFZXTEGugdu5Vh7z9AQH5b4QHfNv1B+0acNk8cRzE/zdnaTnly7h0xclSmz38ZLluZl1W215zInIBBnNdZpgw=

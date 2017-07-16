@@ -1,6 +1,6 @@
 # Puzzle Hero
 
-[![CircleCI](https://img.shields.io/circleci/project/github/lancelafontaine/puzzle-hero.svg)](https://circleci.com/gh/lancelafontaine/puzzle-hero/tree/master) [![CodeCov](https://img.shields.io/codecov/c/github/lancelafontaine/puzzle-hero.svg)](https://codecov.io/gh/lancelafontaine/puzzle-hero)
+[![Travis CI](https://img.shields.io/travis/lancelafontaine/puzzle-hero/master.svg)](https://travis-ci.org/lancelafontaine/puzzle-hero) [![CodeCov](https://img.shields.io/codecov/c/github/lancelafontaine/puzzle-hero.svg)](https://codecov.io/gh/lancelafontaine/puzzle-hero)
 
 ## Quick Start
 
