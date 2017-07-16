@@ -1,6 +1,7 @@
 from config import config
 from sanic.response import json
 import rest_service
+import os
 
 def get_heartbeat(request):
     return json(ok('hello world'))

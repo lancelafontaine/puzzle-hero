@@ -3,7 +3,10 @@
     <div class="container">
       <div class="row">
         <div class="navbar-text">
-          <h2>Puzzle Hero</h2>
+          <a href="/">
+            <img class="navbar-brand" src="static/scs.ico"/>
+            <h2>Puzzle Hero</h2>
+          </a>
           <span> {{ loginMessage }}</span>
         </div>
       </div>
@@ -20,7 +23,7 @@ export default {
       if (Global.isLoggedIn) {
         return 'Welcome!'
       }
-      return 'Login'
+      return ''
     }
   }
 }
@@ -30,6 +33,13 @@ export default {
   .navbar {
     background-color: #962538;
     border-bottom: 3px solid #CCB47D;
+  }
+  .navbar-brand {
+    height: 50px;
+    padding-top:10px;
+    line-height: 60px;
+    float: left;
+    margin-right:2rem;
   }
   .navbar-text {
     width: 100%;
@@ -48,5 +58,4 @@ export default {
     font-size: 1.3em;
     margin: 14px 0;
   }
-
 </style>
