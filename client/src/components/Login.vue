@@ -72,7 +72,7 @@ export default {
         this.showingInvalidUsernameError = false
         const slackUser = this.findSlackUserByUsername(userInput)
         this.currentSlackUsername = slackUser.username
-        this.currentSlackRealname = slackUser.realname
+        this.currentSlackRealname = (slackUser.realname === '') ? slackUser.username : slackUser.realname
         this.currentSlackImage = slackUser.avatar
       } else {
         this.loadDefaultUserInfo()
