@@ -2,10 +2,10 @@ from config import config
 from sanic.response import json
 import rest_service
 
-def get_heartbeat(request):
+def get_heartbeat(request=None):
     return json(ok('hello world'))
 
-def get_slack_users(request):
+def get_slack_users(request=None):
     slack_users_response = rest_service.slack_users().json()
     if not slack_users_response['ok']:
         return json(error('Slack API error'), status=504)
