@@ -2,13 +2,12 @@
   <div class="login">
     <div class="container">
       <div class="row">
-        <div id="login-header">
-          <button id="login-btn" v-on:click="changeFormType($event)" v-bind:class="{'primary-btn': showingLoginForm, 'secondary-btn': showingRegisterForm}">Login</button>
-          <button id="register-btn" v-on:click="changeFormType($event)" v-bind:class="{'primary-btn': showingRegisterForm, 'secondary-btn': showingLoginForm}">Register</button>
-        </div>
-      </div>
-      <div class="row">
         <div id="login-form" class="column column-50 column-offset-25">
+          <div id="user-info-div" >
+              <span v-show="currentSlackRealname">Welcome, {{currentSlackRealname}}</span>
+            </p>
+            <img id="user-info-image" v-bind:src="currentSlackImage">
+          </div>
           <div class="alert-error" v-show="showingInvalidUsernameError">
             That username doesn't exist in the SCS Competitions Slack group.
             <a href="">Click here to register.</a>
@@ -22,12 +21,6 @@
             <input type="password" placeholder="correct_horse_battery_staple" name="password" id="password" required />
             <input type="submit" class="primary-btn" name="submit" id="login-form-submit" value="Submit"/>
           </form>
-          <div id="user-info-div" v-show="currentSlackUsername">
-            <p id="user-info-header"><strong>{{currentSlackUsername}}</strong>
-              <span v-show="currentSlackRealname">({{currentSlackRealname}})</span>
-            </p>
-            <img id="user-info-image" v-bind:src="currentSlackImage">
-          </div>
         </div>
       </div>
     </div>
@@ -54,8 +47,14 @@ export default {
   },
   mounted () {
     this.populateSlackUsers()
+    this.loadDefaultUserInfo()
   },
   methods: {
+    loadDefaultUserInfo () {
+      this.currentSlackUsername = ''
+      this.currentSlackRealname = 'Authenticate with Slack username'
+      this.currentSlackImage = 'static/bug_default.png'
+    },
     populateSlackUsers () {
       restFactory.slackUsers((res) => {
         if (res.status === 200) {
@@ -73,12 +72,10 @@ export default {
         this.showingInvalidUsernameError = false
         const slackUser = this.findSlackUserByUsername(userInput)
         this.currentSlackUsername = slackUser.username
-        this.currentSlackRealname = slackUser.realname
+        this.currentSlackRealname = (slackUser.realname === '') ? slackUser.username : slackUser.realname
         this.currentSlackImage = slackUser.avatar
       } else {
-        this.currentSlackUsername = ''
-        this.currentSlackRealname = ''
-        this.currentSlackImage = ''
+        this.loadDefaultUserInfo()
       }
     },
     findSlackUserByUsername (username) {
@@ -108,17 +105,6 @@ export default {
       } else {
         this.showingInvalidUsernameError = true
       }
-    },
-    changeFormType (e) {
-      const idClicked = e.target.id
-      if (idClicked === 'register-btn') {
-        this.showingLoginForm = false
-        this.showingRegisterForm = true
-      }
-      if (idClicked === 'login-btn') {
-        this.showingLoginForm = true
-        this.showingRegisterForm = false
-      }
     }
   }
 }
@@ -135,8 +121,11 @@ export default {
   }
   #user-info-div{
     text-align: center;
+    margin-bottom: 4rem;
   }
   #user-info-image {
+    width: 25%;
+    max-width: 192px;
     border: 2px solid #888888;
     border-radius: 50%;
   }
