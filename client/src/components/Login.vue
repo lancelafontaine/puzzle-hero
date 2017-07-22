@@ -56,7 +56,7 @@ export default {
       this.currentSlackImage = 'static/bug_default.png'
     },
     populateSlackUsers () {
-      restFactory.slackUsers.then((res) => {
+      restFactory.getSlackUsers().then((res) => {
         if (res.status === 200) {
           this.slackUsers = res.data.data
           this.autocompleteSlackUsers()
