@@ -36,8 +36,6 @@ export default {
   data () {
     return {
       email: 'competitions.scs@ecaconcordia.ca',
-      showingLoginForm: true,
-      showingRegisterForm: false,
       showingInvalidUsernameError: false,
       currentSlackUsername: '',
       currentSlackRealname: '',
