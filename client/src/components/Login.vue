@@ -36,8 +36,6 @@ export default {
   data () {
     return {
       email: 'competitions.scs@ecaconcordia.ca',
-      showingLoginForm: true,
-      showingRegisterForm: false,
       showingInvalidUsernameError: false,
       currentSlackUsername: '',
       currentSlackRealname: '',
@@ -56,13 +54,15 @@ export default {
       this.currentSlackImage = 'static/bug_default.png'
     },
     populateSlackUsers () {
-      restFactory.slackUsers((res) => {
+      restFactory.getSlackUsers().then((res) => {
         if (res.status === 200) {
           this.slackUsers = res.data.data
           this.autocompleteSlackUsers()
         } else {
           global.defaultUserError(res)
         }
+      }).catch((err) => {
+        console.error(err)
       })
     },
     validateEnteredSlackUser (e) {
