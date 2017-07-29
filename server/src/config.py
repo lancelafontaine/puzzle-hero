@@ -7,6 +7,8 @@ config = {
         'testuser',
         'slackbot'
     ],
-    'slackApiUrl': 'https://slack.com/api',
-    'slackToken': os.environ['SLACK_TOKEN']
+    'slack_api_url': 'https://slack.com/api',
+    'slack_api_token': os.environ['SLACK_TOKEN'],
+    'sparkpost_api_url': 'https://api.sparkpost.com/api/v1',
+    'sparkpost_api_token': os.environ['SPARKPOST_TOKEN']
 }

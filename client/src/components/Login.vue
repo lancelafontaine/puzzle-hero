@@ -102,6 +102,15 @@ export default {
             formValues[inputs[i].id] = inputs[i].value
           }
         }
+        restFactory.postVerifySlackEmail(formValues).then((res) => {
+          if (res.status === 200) {
+            console.log(res.data.data)
+          } else {
+            global.defaultUserError(res)
+          }
+        }).catch((err) => {
+          console.error(err)
+        })
       } else {
         this.showingInvalidUsernameError = true
       }

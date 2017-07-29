@@ -12,4 +12,4 @@
 ### Server
 
 - `python3 -m pip install -r server/requirements.txt`
-- `SLACK_TOKEN=%enter_token_here% python3 server/src/run.py`
+- `SLACK_TOKEN=%enter_token_here% SPARKPOST_TOKEN=%enter_token_here% python3 server/src/run.py`

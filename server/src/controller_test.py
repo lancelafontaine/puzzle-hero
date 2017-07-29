@@ -184,15 +184,3 @@ def test_modify_user():
 
 def test_add_challenge():
     controller.add_challenge(None, None)
-
-def test_ok():
-    data = {
-        'hello': 'world'
-    }
-    assert isinstance(controller.ok(data), dict)
-    assert controller.ok(data) == {'ok': True, 'data': {'hello': 'world'}}
-
-def test_error():
-    assert isinstance(controller.error('oops'), dict)
-    assert controller.error('oops') == {'ok': False, 'message': 'oops'}
-
