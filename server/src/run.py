@@ -14,5 +14,9 @@ async def heartbeat(request):
 async def slack_users(request):
     return controller.get_slack_users(request)
 
+@app.route('/validate-slack-email', methods=['POST', 'OPTIONS'])
+async def validate_slack_email(request):
+    return controller.post_validate_slack_email(request)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
