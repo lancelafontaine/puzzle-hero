@@ -3,11 +3,11 @@ from sanic.response import json
 import rest_service
 
 
-def get_heartbeat(request):
+def get_heartbeat(request=None):
     return json(ok('hello world'))
 
 
-def get_slack_users(request):
+def get_slack_users(request=None):
     slack_users_response = rest_service.slack_users().json()
     if not slack_users_response['ok']:
         return json(error('Slack API error'), status=504)
@@ -18,7 +18,7 @@ def get_slack_users(request):
                 formatted_slack_user = {
                     'username': slack_user['name'],
                     'realname': slack_user['profile']['real_name_normalized'],
-                    'avatar': slack_user['profile']['image_32']
+                    'avatar': slack_user['profile']['image_192']
                 }
                 formatted_slack_users.append(formatted_slack_user)
         return json(ok(formatted_slack_users))

@@ -14,7 +14,7 @@ describe('Navbar.vue', () => {
     Global.isLoggedIn = false
     const Constructor = Vue.extend(Navbar)
     const vm = new Constructor().$mount()
-    expect(vm.loginMessage).to.equal('Login')
+    expect(vm.loginMessage).to.equal('')
   })
 
   it('should welcome user if logged in', () => {
