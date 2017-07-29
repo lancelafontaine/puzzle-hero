@@ -2,17 +2,40 @@ from sanic import Sanic
 from sanic_cors import CORS, cross_origin
 from config import config
 import controller
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
 
 app = Sanic(__name__)
 CORS(app, origins=config['allowed_host_list'])
+
+engine = create_engine('sqlite:///app.db')
+Base = declarative_base()
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
+
 
 @app.route('/', methods=['GET'])
 async def heartbeat(request):
     return controller.get_heartbeat(request)
 
+
 @app.route('/slack-users', methods=['GET'])
 async def slack_users(request):
     return controller.get_slack_users(request)
+
+
+@app.route("/users", methods=["GET"])
+async def users(request):
+    return controller.get_app_users(request, session)
+
+
+@app.route("/add_user", methods=["POST"])
+async def users(request):
+    return controller.add_user(request, session)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
