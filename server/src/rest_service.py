@@ -20,17 +20,17 @@ def validate_user(session, data):
 
 # not even slightly functional
 def team_users(session, team_name):
-    users = session.query(User).filter(User.team == team_name)
+    users = session.query(User).filter(User.team_name == team_name)
 
 
 def add_user(session, data):
-    user = User(username=data['username'], name=data['name'], password=data['password'], score=0)
+    user = User(username=data['username'], name=data['name'], password=data['password'], score=0, team=None)
     try:
         session.add(user)
         session.commit()
         return True, "Successfully added User {}".format(data["username"])
-    except e:
-        return False, e.message
+    except Exception as e:
+        return False, e
 
 
 def join_team(session, username, team):
