@@ -59,9 +59,55 @@ Only username, name, and profile picture will be returned for the sake of privac
     }
   ]
 }
+
+```
+### RESOURCE `/users`
+
+#### GET `/users`
+
+This endpoint will return the list of app users belonging to the SCS Competitions.
+
+Only username, name, score, and team name will be returned for the sake of privacy.
+
+```
+{
+  "ok": true,
+  "data": [
+    {
+      "username": "algorithm_god",
+      "name": "Algo McAlgoFace",
+      "score": 0,
+      team: "Best Team 2017"
+    },
+    {
+      "username": "l33thaxx0r",
+      "name": "Ada Lovelace",
+      "score": 15000,
+      team: ":+1:"
+    },
+  ]
+}
 ```
 
+```
+### RESOURCE `/add_user`
 
+#### POST `/add_user`
 
+This endpoint will add a user to the app.
 
+Example payload:
+```
+  {
+    "username": "algo_dude",
+    "name": "Best Human",
+    "password": "dsnaiugfsahfsna42o532sa" # hashed
+  }
+```
 
+```
+{
+  "ok": true,
+  "data": "Succesfully added user algo_dude"
+}
+```
