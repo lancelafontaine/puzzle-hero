@@ -25,7 +25,6 @@ def get_slack_users(request=None):
 
 
 def authenticate_user(request, db_session):
-    request = request.json
     if "username" not in request or "password" not in request:
         return json(error("Malformed authenticate_user request"))
 
@@ -53,7 +52,6 @@ def get_app_users(request, db_session):
 
 
 def get_teams(request, db_session):
-    # might add filter by user later
     query_filter = {}
     if "name" in request:
         query_filter["name"] = request["name"]
@@ -68,7 +66,6 @@ def get_teams(request, db_session):
 
 
 def add_user(request, db_session):
-    request = request.json
     data = {
         "username": request["username"],
         "password": request["password"]
@@ -87,15 +84,12 @@ def add_user(request, db_session):
 
 
 def modify_user(request, db_session):
-    request = request.json
-
     succeeded, message = rest_service.modify_user(db_session, request)
     result = ok if succeeded else error
     return json(result(message))
 
 
 def add_team(request, db_session):
-    request = request.json
     if "name" not in request or "username" not in request:
         return json(error("Malformed request: {}".format(request)))
 
@@ -105,7 +99,6 @@ def add_team(request, db_session):
 
 
 def join_team(request, db_session):
-    request = request.json
     if "name" not in request or "username" not in request:
         return json(error("Malformed request: {}".format(request)))
 

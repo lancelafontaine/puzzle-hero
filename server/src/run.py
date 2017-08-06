@@ -27,37 +27,37 @@ async def slack_users(request):
 
 @app.route('/authenticate-user', methods=['GET'])
 async def authenticate_user(request):
-    return controller.authenticate_user(request, db_session)
+    return controller.authenticate_user(request.json, db_session)
 
 
 @app.route("/users", methods=["GET"])
 async def users(request):
-    return controller.get_app_users(request, db_session)
+    return controller.get_app_users(request.json, db_session)
 
 
 @app.route("/teams", methods=["GET"])
 async def teams(request):
-    return controller.get_teams(request, db_session)
+    return controller.get_teams(request.json, db_session)
 
 
 @app.route("/modify-user", methods=["POST"])
 async def modify_user(request):
-    return controller.modify_user(request, db_session)
+    return controller.modify_user(request.json, db_session)
 
 
 @app.route("/add-user", methods=["POST"])
 async def add_user(request):
-    return controller.add_user(request, db_session)
+    return controller.add_user(request.json, db_session)
 
 
 @app.route("/add-team", methods=["POST"])
 async def add_team(request):
-    return controller.add_team(request, db_session)
+    return controller.add_team(request.json, db_session)
 
 
 @app.route("/join-team", methods=["POST"])
 async def join_team(request):
-    return controller.join_team(request, db_session)
+    return controller.join_team(request.json, db_session)
 
 
 if __name__ == '__main__':
