@@ -1,7 +1,8 @@
 from config import config
 from sanic.response import json
+import json as json_dict
 import rest_service
-
+from helpers import ok, error
 def get_heartbeat(request=None):
     return json(ok('hello world'))
 
@@ -26,13 +27,10 @@ def post_validate_slack_email(request):
     if not slack_users_response['ok']:
         return json(error('Slack API error'), status=504)
     slack_user_to_email = None
-    user_data = request.json
-    print(user_data)
-    print(type(user_data))
     for slack_user in slack_users_response['members']:
         if not slack_user['deleted'] and \
-                slack_user['name'] not in config['blacklisted_slack_users']:
-                # user_data.get('username') == slack_user['name']:
+                slack_user['name'] not in config['blacklisted_slack_users'] and \
+                request.json.get('username') == slack_user['name']:
             slack_user_to_email = slack_user
             break
 
@@ -80,8 +78,3 @@ def add_challenge(request, session):
     pass
 
 
-def ok(data):
-    return {'ok': True, 'data': data}
-
-def error(message):
-    return {'ok': False, 'message': message}

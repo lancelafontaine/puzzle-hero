@@ -1,11 +1,12 @@
 from sanic import Sanic
+from sanic.response import json
 from sanic_cors import CORS, cross_origin
 from config import config
 import controller
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-
+from helpers import ok
 
 app = Sanic(__name__)
 CORS(app, origins=config['allowed_host_list'])
@@ -28,6 +29,8 @@ async def slack_users(request):
 
 @app.route('/validate-slack-email', methods=['POST', 'OPTIONS'])
 async def validate_slack_email(request):
+    if request.method == 'OPTIONS':
+        return json(ok({}))
     return controller.post_validate_slack_email(request)
 
 @app.route("/users", methods=["GET"])
