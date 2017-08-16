@@ -6,7 +6,7 @@ import controller
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from helpers import ok
+from decorators import responds_to_options
 
 app = Sanic(__name__)
 CORS(app, origins=config['allowed_host_list'])
@@ -28,9 +28,8 @@ async def slack_users(request):
     return controller.get_slack_users(request)
 
 @app.route('/validate-slack-email', methods=['POST', 'OPTIONS'])
+@responds_to_options()
 async def validate_slack_email(request):
-    if request.method == 'OPTIONS':
-        return json(ok({}))
     return controller.post_validate_slack_email(request)
 
 @app.route("/users", methods=["GET"])
@@ -38,7 +37,8 @@ async def users(request):
     return controller.get_app_users(request, session)
 
 
-@app.route("/add_user", methods=["POST"])
+@app.route("/add_user", methods=["POST", "OPTIONS"])
+@responds_to_options()
 async def users(request):
     return controller.add_user(request, session)
 
