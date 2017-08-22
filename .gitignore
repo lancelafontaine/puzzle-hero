@@ -6,3 +6,5 @@ __pycache__
 cov.xml
 coverage.xml
 *,cover
+app.db
+package-lock.json

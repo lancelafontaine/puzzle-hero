@@ -5,6 +5,34 @@ import requests
 from rest_service import slack_users
 from sanic.response import HTTPResponse
 
+class OneResult:
+    def __init__(self, result = None):
+        self.result = result
+    def one(self):
+        return self.result
+
+class ShallowFilter:
+    def __init__(self, anything = None):
+        self.dataToReturn = anything
+    def filter(self, any):
+        return OneResult(self.dataToReturn)
+    def filter_by(self, **any):
+        return [self.dataToReturn]
+
+class UserMockProvider:
+    def __init__(self, user = None):
+        self.user = user
+    def query(self, any):
+        return ShallowFilter(self.user)
+
+class MockUser:
+    def __init__(self, username = None, password = None, name = None, score = None, team = None):
+        self.username = username
+        self.password = password
+        self.team_name = team
+        self.score = score
+        self.name = name
+
 def test_get_heartbeat():
     assert type(controller.get_heartbeat()) is HTTPResponse
     assert controller.get_heartbeat().status == 200
@@ -25,6 +53,26 @@ def test_get_slack_users_slack_api_error(monkeypatch):
     assert controller.get_slack_users().status == 504
     data = json.loads(controller.get_slack_users().body)
     assert data == {'message': 'Slack API error', 'ok': False}
+
+def test_authenticate_user():
+    mockUser = MockUser("testuser", "testpassword")
+    mockRequest = {"username": "testuser", "password": "testpassword"}
+    mockWrongRequest = {"username": "testuser"}
+    correct = controller.authenticate_user(mockRequest, UserMockProvider(mockUser))
+    incorrect = controller.authenticate_user(mockWrongRequest, UserMockProvider(mockUser))
+    data = json.loads(correct.body)
+    assert data['ok'] == True
+    data = json.loads(incorrect.body)
+    assert data['ok'] == False
+
+def test_get_app_users():
+    mockUser = MockUser("testuser", "testpassword", "tester", 0, "sudoers")
+    mockRequest = {"username": "testuser", "team": "sudoers"}
+
+    result = controller.get_app_users(mockRequest, UserMockProvider(mockUser))
+    data = json.loads(result.body)
+    assert data['ok'] == True
+    assert data['data'][0]['username'] == mockRequest["username"]
 
 def test_get_slack_users_no_users(monkeypatch):
     class SlackUsersMock:
