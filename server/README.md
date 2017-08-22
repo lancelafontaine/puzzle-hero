@@ -88,8 +88,6 @@ Only username, name, score, and team name will be returned for the sake of priva
   ]
 }
 ```
-
-```
 ### RESOURCE `/add_user`
 
 #### POST `/add_user`
