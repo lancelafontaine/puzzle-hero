@@ -9,7 +9,7 @@ from sanic.response import HTTPResponse
 ######### GET TESTS ###########
 
 def test_get_heartbeat():
-    assert type(controller.get_heartbeat()) is HTTPResponse
+    assert isinstance(controller.get_heartbeat(), HTTPResponse)
     assert controller.get_heartbeat().status == 200
     data = json.loads(controller.get_heartbeat(None).body)
     assert data == {'data': 'hello world', 'ok': True}
@@ -24,7 +24,7 @@ def test_get_slack_users_slack_api_error(monkeypatch):
                 'members': []
             }
     monkeypatch.setattr(requests, 'get', SlackUsersMock)
-    assert type(controller.get_slack_users()) is HTTPResponse
+    assert isinstance(controller.get_slack_users(), HTTPResponse)
     assert controller.get_slack_users().status == 504
     data = json.loads(controller.get_slack_users().body)
     assert data == {'message': 'Slack API error', 'ok': False}
@@ -35,7 +35,7 @@ def test_get_app_users():
 
     result = controller.get_app_users(mockRequest, mocks.MockFilterProvider(mockUser))
     data = json.loads(result.body)
-    assert data['ok'] == True
+    assert data['ok']
     assert data['data'][0]['username'] == mockRequest["username"]
 
 def test_get_teams():
@@ -44,8 +44,8 @@ def test_get_teams():
 
     result = controller.get_teams(mockRequest, mocks.MockFilterProvider(mockTeam))
     data = json.loads(result.body)
-    assert data['ok'] == True
-    assert data['data'][0] != None
+    assert data['ok']
+    assert data['data'][0] is not None
 
 def test_get_slack_users_no_users(monkeypatch):
     class SlackUsersMock:
@@ -57,7 +57,7 @@ def test_get_slack_users_no_users(monkeypatch):
                 'members': []
             }
     monkeypatch.setattr(requests, 'get', SlackUsersMock)
-    assert type(controller.get_slack_users()) is HTTPResponse
+    assert isinstance(controller.get_slack_users(), HTTPResponse)
     assert controller.get_slack_users().status == 200
     data = json.loads(controller.get_slack_users().body)
     assert data == {'data': [], 'ok': True}
@@ -97,7 +97,7 @@ def test_get_slack_users_filters_deleted_and_blacklisted(monkeypatch):
                 ]
             }
     monkeypatch.setattr(requests, 'get', SlackUsersMock)
-    assert type(controller.get_slack_users()) is HTTPResponse
+    assert isinstance(controller.get_slack_users(), HTTPResponse)
     assert controller.get_slack_users().status == 200
     data = json.loads(controller.get_slack_users().body)
     assert data == {
@@ -119,9 +119,9 @@ def test_authenticate_user():
     correct = controller.authenticate_user(mockRequest, mocks.MockFilterProvider(mockUser))
     incorrect = controller.authenticate_user(mockWrongRequest, mocks.MockFilterProvider(mockUser))
     data = json.loads(correct.body)
-    assert data['ok'] == True
+    assert data['ok']
     data = json.loads(incorrect.body)
-    assert data['ok'] == False
+    assert not data['ok']
 
 
 ######## ADD TESTS #############
@@ -154,7 +154,7 @@ def test_add_user(monkeypatch):
             }
     monkeypatch.setattr(requests, 'get', SlackUsersMock)
     response = controller.get_slack_users()
-    assert type(response) is HTTPResponse
+    assert isinstance(response, HTTPResponse)
     assert response.status == 200
 
     mockRequest = {"username": "four-o-four", "password": "no"}
@@ -164,7 +164,7 @@ def test_add_user(monkeypatch):
 
     mockRequest = {"username": "snax", "password": "no"}
     someSlackResult = json.loads(controller.add_user(mockRequest, mocks.MockAdderDatabase()).body)
-    assert someSlackResult["ok"] == True
+    assert someSlackResult["ok"]
     assert someSlackResult["data"] == "Successfully added User snax"
 
     mockRequest = {"username": "fail", "password": "no"}
@@ -176,7 +176,7 @@ def test_add_user(monkeypatch):
 def test_modify_user():
     result = controller.modify_user({"username": "snax", "name": "Hamburger", "changes": {}}, mocks.MockAdderDatabase())
     result = json.loads(result.body)
-    assert result["ok"] == True
+    assert result["ok"]
 
     result = controller.modify_user({"username": "fail", "name": "Hamburger", "changes": {}}, mocks.FaultyCommitDatabase())
     result = json.loads(result.body)
@@ -189,10 +189,10 @@ def test_ok():
     data = {
         'hello': 'world'
     }
-    assert type(controller.ok(data)) is dict
+    assert isinstance(controller.ok(data), dict)
     assert controller.ok(data) == {'ok': True, 'data': {'hello': 'world'}}
 
 def test_error():
-    assert type(controller.error('oops')) is dict
+    assert isinstance(controller.error('oops'), dict)
     assert controller.error('oops') == {'ok': False, 'message': 'oops'}
 
