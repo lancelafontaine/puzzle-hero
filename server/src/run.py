@@ -2,6 +2,7 @@ from sanic import Sanic
 from sanic_cors import CORS, cross_origin
 from config import config
 import controller
+import schema
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base

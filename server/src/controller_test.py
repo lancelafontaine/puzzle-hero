@@ -171,9 +171,16 @@ def test_add_user(monkeypatch):
     failSlackResult = json.loads(controller.add_user(mockRequest, mocks.MockAdderDatabase()).body)
     assert failSlackResult["ok"] == False
 
-
 ###### MODIFY TESTS ########
 
+def test_modify_user():
+    result = controller.modify_user({"username": "snax", "name": "Hamburger", "changes": {}}, mocks.MockAdderDatabase())
+    result = json.loads(result.body)
+    assert result["ok"] == True
+
+    result = controller.modify_user({"username": "fail", "name": "Hamburger", "changes": {}}, mocks.FaultyCommitDatabase())
+    result = json.loads(result.body)
+    assert result["ok"] == False
 
 def test_add_challenge():
     controller.add_challenge(None, None)

@@ -1,3 +1,5 @@
+import schema
+
 class OneResult:
     def __init__(self, result = None):
         self.result = result
@@ -36,7 +38,17 @@ class MockAdderDatabase:
         if user.username == "fail":
             raise Exception("db simulated failure")
         return
+    def query(self, filter):
+        return ShallowFilter(MockUser("anything"))
     def rollback(self):
         return
     def commit(self):
         return
+
+class FaultyCommitDatabase:
+    def query(self, filter):
+        return ShallowFilter(MockUser("anything"))
+    def rollback(self):
+        return
+    def commit(self):
+        raise Exception("db simulated failure")
