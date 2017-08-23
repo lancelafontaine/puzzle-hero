@@ -2,36 +2,11 @@ import controller
 import json
 import pytest
 import requests
+import mocks
 from rest_service import slack_users
 from sanic.response import HTTPResponse
 
-class OneResult:
-    def __init__(self, result = None):
-        self.result = result
-    def one(self):
-        return self.result
-
-class ShallowFilter:
-    def __init__(self, anything = None):
-        self.dataToReturn = anything
-    def filter(self, any):
-        return OneResult(self.dataToReturn)
-    def filter_by(self, **any):
-        return [self.dataToReturn]
-
-class UserMockProvider:
-    def __init__(self, user = None):
-        self.user = user
-    def query(self, any):
-        return ShallowFilter(self.user)
-
-class MockUser:
-    def __init__(self, username = None, password = None, name = None, score = None, team = None):
-        self.username = username
-        self.password = password
-        self.team_name = team
-        self.score = score
-        self.name = name
+######### GET TESTS ###########
 
 def test_get_heartbeat():
     assert type(controller.get_heartbeat()) is HTTPResponse
@@ -54,25 +29,23 @@ def test_get_slack_users_slack_api_error(monkeypatch):
     data = json.loads(controller.get_slack_users().body)
     assert data == {'message': 'Slack API error', 'ok': False}
 
-def test_authenticate_user():
-    mockUser = MockUser("testuser", "testpassword")
-    mockRequest = {"username": "testuser", "password": "testpassword"}
-    mockWrongRequest = {"username": "testuser"}
-    correct = controller.authenticate_user(mockRequest, UserMockProvider(mockUser))
-    incorrect = controller.authenticate_user(mockWrongRequest, UserMockProvider(mockUser))
-    data = json.loads(correct.body)
-    assert data['ok'] == True
-    data = json.loads(incorrect.body)
-    assert data['ok'] == False
-
 def test_get_app_users():
-    mockUser = MockUser("testuser", "testpassword", "tester", 0, "sudoers")
+    mockUser = mocks.MockUser("testuser", "testpassword", "tester", 0, "sudoers")
     mockRequest = {"username": "testuser", "team": "sudoers"}
 
-    result = controller.get_app_users(mockRequest, UserMockProvider(mockUser))
+    result = controller.get_app_users(mockRequest, mocks.MockFilterProvider(mockUser))
     data = json.loads(result.body)
     assert data['ok'] == True
     assert data['data'][0]['username'] == mockRequest["username"]
+
+def test_get_teams():
+    mockTeam = mocks.MockTeam("team1", [mocks.MockUser("testuser")])
+    mockRequest = {"name": "team1"}
+
+    result = controller.get_teams(mockRequest, mocks.MockFilterProvider(mockTeam))
+    data = json.loads(result.body)
+    assert data['ok'] == True
+    assert data['data'][0] != None
 
 def test_get_slack_users_no_users(monkeypatch):
     class SlackUsersMock:
@@ -136,6 +109,74 @@ def test_get_slack_users_filters_deleted_and_blacklisted(monkeypatch):
         }],
         'ok': True
     }
+
+######## AUTH TESTS ###########
+
+def test_authenticate_user():
+    mockUser = mocks.MockUser("testuser", "testpassword")
+    mockRequest = {"username": "testuser", "password": "testpassword"}
+    mockWrongRequest = {"username": "testuser"}
+    correct = controller.authenticate_user(mockRequest, mocks.MockFilterProvider(mockUser))
+    incorrect = controller.authenticate_user(mockWrongRequest, mocks.MockFilterProvider(mockUser))
+    data = json.loads(correct.body)
+    assert data['ok'] == True
+    data = json.loads(incorrect.body)
+    assert data['ok'] == False
+
+
+######## ADD TESTS #############
+
+def test_add_user(monkeypatch):
+    class SlackUsersMock:
+        def __init__(*args, **kwargs):
+            return
+        def json(self):
+            return {
+                'ok': True,
+                'members': [
+                    {
+                        'deleted': False,
+                        'name': 'snax',
+                        'profile': {
+                            'real_name_normalized': 'Hot Dog',
+                            'image_192': 'https://fakeurl.coolbeans'
+                        }
+                    },
+                    {
+                        'deleted': False,
+                        'name': 'fail',
+                        'profile': {
+                            'real_name_normalized': 'I should throw',
+                            'image_192': 'https://fakeurl.coolbeans'
+                        }
+                    }
+                ]
+            }
+    monkeypatch.setattr(requests, 'get', SlackUsersMock)
+    response = controller.get_slack_users()
+    assert type(response) is HTTPResponse
+    assert response.status == 200
+
+    mockRequest = {"username": "four-o-four", "password": "no"}
+    noSlackResult = json.loads(controller.add_user(mockRequest, None).body)
+    assert noSlackResult["ok"] == False
+    assert noSlackResult["message"] == "No Slack user four-o-four"
+
+    mockRequest = {"username": "snax", "password": "no"}
+    someSlackResult = json.loads(controller.add_user(mockRequest, mocks.MockAdderDatabase()).body)
+    assert someSlackResult["ok"] == True
+    assert someSlackResult["data"] == "Successfully added User snax"
+
+    mockRequest = {"username": "fail", "password": "no"}
+    failSlackResult = json.loads(controller.add_user(mockRequest, mocks.MockAdderDatabase()).body)
+    assert failSlackResult["ok"] == False
+
+
+###### MODIFY TESTS ########
+
+
+def test_add_challenge():
+    controller.add_challenge(None, None)
 
 def test_ok():
     data = {
