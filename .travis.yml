@@ -1,8 +1,8 @@
 language: python
 python:
+- '3.5'
 - '3.6'
 - 3.6-dev
-- 3.7-dev
 env:
 - NODE_VERSION="6.11.1"
 before_install:
