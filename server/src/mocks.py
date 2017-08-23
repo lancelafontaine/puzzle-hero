@@ -1,5 +1,3 @@
-import schema
-
 class OneResult:
     def __init__(self, result = None):
         self.result = result
