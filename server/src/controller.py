@@ -49,32 +49,89 @@ def post_validate_slack_email(request):
 
     return json(ok(request.json))
 
-def get_app_users(request, session):
-    users_response = rest_service.app_users(session)
+def authenticate_user(request, db_session):
+    if "username" not in request or "password" not in request:
+        return json(error("Malformed authenticate_user request"))
 
+    succeeded, message = rest_service.authenticate_user(db_session, request)
+    result = ok if succeeded else error
+    return json(result(message))
+
+
+def get_app_users(request, db_session):
+    query_filter = {}
+    if "username" in request:
+        query_filter["username"] = request["username"]
+    if "team" in request:
+        query_filter["team_name"] = request["team"]
+
+    users_response = rest_service.app_users(db_session, query_filter)
     users = [{
              'username': user.username,
              'name': user.name,
              'score': user.score,
-             'team': user.team
+             'team': user.team_name
              } for user in users_response]
 
     return json(ok(users))
 
 
-def add_user(request, session):
-    # super preliminary
-    request = request.json
+def get_teams(request, db_session):
+    query_filter = {}
+    if "name" in request:
+        query_filter["name"] = request["name"]
+
+    teams_response = rest_service.teams(db_session, query_filter)
+    teams = [{
+             'name': team.name,
+             'members': [user.username for user in team.members]
+             } for team in teams_response]
+
+    return json(ok(teams))
+
+
+def add_user(request, db_session):
     data = {
         "username": request["username"],
-        "name": request["name"],  # this should actually be retrieved from slack
         "password": request["password"]
     }
-    result = rest_service.add_user(session, data)
-    return json(ok(result)) if result else json(error(result))
+    slack_users = rest_service.slack_users().json()
+    slack_users = [user for user in slack_users['members'] if user["name"] == request["username"]]
+
+    if not slack_users or slack_users[0]['deleted'] or slack_users[0]['name'] in config['blacklisted_slack_users']:
+        return json(error("No Slack user {}".format(request["username"])))
+
+    data["name"] = slack_users[0]['profile']['real_name_normalized']
+
+    succeeded, message = rest_service.add_user(db_session, data)
+    result = ok if succeeded else error
+    return json(result(message))
 
 
-def add_challenge(request, session):
+def modify_user(request, db_session):
+    succeeded, message = rest_service.modify_user(db_session, request)
+    result = ok if succeeded else error
+    return json(result(message))
+
+
+def add_team(request, db_session):
+    if "name" not in request or "username" not in request:
+        return json(error("Malformed request: {}".format(request)))
+
+    succeeded, data = rest_service.add_team(db_session, request)
+    result = ok if succeeded else error
+    return json(result(data))
+
+
+def join_team(request, db_session):
+    if "name" not in request or "username" not in request:
+        return json(error("Malformed request: {}".format(request)))
+
+    succeeded, message = rest_service.join_team(db_session, request)
+    result = ok if succeeded else error
+    return json(result(message))
+
+
+def add_challenge(request, db_session):
     pass
-
 
