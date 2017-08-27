@@ -1,7 +1,7 @@
 import axios from 'axios'
-import restFactory from '@/js/restFactory'
+import restService from '@/js/restService'
 
-describe('restFactory.js', () => {
+describe('restService.js', () => {
   it('slackUsers responds with an array of user objects upon success', () => {
     sinon.stub(axios, 'get').returns(Promise.resolve({
       status: 200,
@@ -11,7 +11,7 @@ describe('restFactory.js', () => {
       }
     }))
 
-    return restFactory.getSlackUsers().then((res) => {
+    return restService.getSlackUsers().then((res) => {
       expect(res.status).to.equal(200)
       expect(JSON.stringify(res.data.data)).to.equal('[]')
     })
