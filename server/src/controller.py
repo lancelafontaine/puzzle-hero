@@ -110,7 +110,6 @@ def join_team(request, db_session):
 def add_challenge(request, db_session):
     pass
 
-
 def ok(data):
     return {'ok': True, 'data': data}
 

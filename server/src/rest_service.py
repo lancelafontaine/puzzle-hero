@@ -63,7 +63,7 @@ def add_team(db_session, data):
         return True, "Successfully added Team {}".format(data["name"])
     except Exception as e:
         db_session.rollback()
-        return False, "Could not add Team {}; already exists".format(data["name"])
+        return False, "Could not add Team Exception: {}".format(e)
 
 
 def join_team(db_session, data):
