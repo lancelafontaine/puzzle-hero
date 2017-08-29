@@ -14,11 +14,13 @@ class Team(Base):
 
     @hybrid_property
     def submissions(self):
-        return set(sum([user.submissions for user in self.members]))
+        return sum([user.submissions for user in self.members])
 
     @hybrid_property
     def score(self):
-        return sum([submit.challenge.value for submit in self.submissions if submit.state == "accepted"])
+        unique_submissions = {submit.challenge.id: submit for submit in self.submissions if submit.state == "accepted"}
+        unique_submissions = unique_submissions.values()
+        return sum([submit.challenge.value for submit in unique_submissions])
 
     def __repr__(self):
         return "<Team(name='{}', members={})>".format(self.name, self.members)
