@@ -3,10 +3,10 @@ from sanic.response import json
 import rest_service
 from helpers import ok, error
 
-def get_heartbeat(request=None):
+def get_heartbeat(request):
     return json(ok('hello world'))
 
-def get_slack_users(request=None, db_session=None):
+def get_slack_users(request):
     slack_users_response = rest_service.slack_users().json()
     if not slack_users_response['ok']:
         return json(error('Slack API error'), status=504)
@@ -22,7 +22,7 @@ def get_slack_users(request=None, db_session=None):
                 formatted_slack_users.append(formatted_slack_user)
         return json(ok(formatted_slack_users))
 
-def post_verify_slack_email(request=None, db_session=None):
+def post_verify_slack_email(request):
     slack_users_response = rest_service.slack_users().json()
     if not slack_users_response['ok']:
         return json(error('Slack API error'), status=504)
@@ -57,7 +57,7 @@ def post_verify_slack_email(request=None, db_session=None):
 
     return json(ok(request.json))
 
-def authenticate_user(request=None, db_session=None):
+def authenticate_user(request, db_session):
     if "username" not in request or "password" not in request:
         return json(error("Malformed authenticate_user request"))
 
@@ -66,7 +66,7 @@ def authenticate_user(request=None, db_session=None):
     return json(result(message))
 
 
-def get_app_users(request=None, db_session=None):
+def get_app_users(request, db_session):
     query_filter = {}
     if "username" in request:
         query_filter["username"] = request["username"]
@@ -84,7 +84,7 @@ def get_app_users(request=None, db_session=None):
     return json(ok(users))
 
 
-def get_teams(request=None, db_session=None):
+def get_teams(request, db_session):
     query_filter = {}
     if "name" in request:
         query_filter["name"] = request["name"]
@@ -98,7 +98,7 @@ def get_teams(request=None, db_session=None):
     return json(ok(teams))
 
 
-def add_user(request=None, db_session=None):
+def add_user(request, db_session):
     data = {
         "username": request["username"],
         "password": request["password"]
@@ -116,7 +116,7 @@ def add_user(request=None, db_session=None):
     return json(result(message))
 
 
-def modify_user(request=None, db_session=None):
+def modify_user(request, db_session):
     succeeded, message = rest_service.modify_user(db_session, request)
     result = ok if succeeded else error
     return json(result(message))
@@ -131,7 +131,7 @@ def add_team(request, db_session):
     return json(result(data))
 
 
-def join_team(request=None, db_session=None):
+def join_team(request, db_session):
     if "name" not in request or "username" not in request:
         return json(error("Malformed request: {}".format(request)))
 
@@ -140,6 +140,6 @@ def join_team(request=None, db_session=None):
     return json(result(message))
 
 
-def add_challenge(request=None, db_session=None):
+def add_challenge(request, db_session):
     pass
 
