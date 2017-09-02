@@ -102,7 +102,7 @@ export default {
             formValues[inputs[i].id] = inputs[i].value
           }
         }
-        restFactory.postVerifySlackEmail(formValues).then((res) => {
+        restService.postVerifySlackEmail(formValues).then((res) => {
           if (res.status === 200) {
             console.log(res.data.data)
           } else {
