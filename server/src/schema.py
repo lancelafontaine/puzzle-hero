@@ -23,7 +23,7 @@ class Team(Base):
         return sum([submit.challenge.value for submit in unique_submissions])
 
     def __repr__(self):
-        return "<Team(name='{}', members={})>".format(self.name, self.members)
+        return "<Team(name='{}', members={}, score={})>".format(self.name, self.members, self.score)
 
 
 class User(Base):
@@ -40,26 +40,35 @@ class User(Base):
     submissions = relationship("Submission", back_populates="user")
 
     def __repr__(self):
-        return "<User(username='{}', name='{}', score={}, team='{}')>".format(self.username, self.name, self.score, self.team_name)
+        return "<User(username='{}', name='{}', score={}, team='{}')>".format(
+                                                                                self.username,
+                                                                                self.name,
+                                                                                self.score,
+                                                                                self.team_name
+                                                                             )
 
 
 class Challenge(Base):
     __tablename__ = 'challenges'
 
     identifier = Column(Integer, autoincrement=True, primary_key=True)
-    value = Column(Integer)
-    text = Column(String)
+    score = Column(Integer)
+    description = Column(String)
     submissions = relationship("Submission", back_populates="challenge")
 
     def __repr__(self):
-        return "<Challenge(id={}, value={}, text='{}')>".format(self.identifier, self.value, self.text)
+        return "<Challenge(id={}, score={}, description='{}')>".format(
+                                                                        self.identifier,
+                                                                        self.score,
+                                                                        self.description
+                                                                      )
 
 
 class Submission(Base):
     __tablename__ = 'submissions'
 
     identifier = Column(Integer, autoincrement=True, primary_key=True)
-    text = Column(String)
+    content = Column(String)
 
     user = relationship("User", back_populates="submissions")
     user_name = Column(String, ForeignKey('users.name'))
@@ -72,7 +81,14 @@ class Submission(Base):
         return self.user.team
 
     def __repr__(self):
-        return "<Submission(id={}, user='{}', text='{}', challenge={}, team={})>".format(self.identifier, self.user_name, self.text, self.challenge_id, self.team.name)
+        return "<Submission(id={}, user='{}', content='{}', challenge={}, team={})>".format(
+                                                                                            self.identifier,
+                                                                                            self.user_name,
+                                                                                            self.content,
+                                                                                            self.challenge_id,
+                                                                                            self.team.name
+                                                                                           )
+
 
 
 Base.metadata.create_all(engine)
