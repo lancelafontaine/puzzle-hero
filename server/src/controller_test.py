@@ -18,6 +18,7 @@ def test_get_slack_users_slack_api_error(monkeypatch):
     class SlackUsersMock:
         def __init__(*args, **kwargs):
             return
+
         def json(self):
             return {
                 'ok': False,
@@ -51,6 +52,7 @@ def test_get_slack_users_no_users(monkeypatch):
     class SlackUsersMock:
         def __init__(*args, **kwargs):
             return
+
         def json(self):
             return {
                 'ok': True,
@@ -66,6 +68,7 @@ def test_get_slack_users_filters_deleted_and_blacklisted(monkeypatch):
     class SlackUsersMock:
         def __init__(*args, **kwargs):
             return
+
         def json(self):
             return {
                 'ok': True,
@@ -195,4 +198,3 @@ def test_ok():
 def test_error():
     assert isinstance(controller.error('oops'), dict)
     assert controller.error('oops') == {'ok': False, 'message': 'oops'}
-
