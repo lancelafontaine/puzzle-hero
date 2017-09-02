@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import restFactory from '@/js/restFactory'
+import restService from '@/js/restService'
 import global from '@/global'
 
 export default {
@@ -54,7 +54,7 @@ export default {
       this.currentSlackImage = 'static/bug_default.png'
     },
     populateSlackUsers () {
-      restFactory.getSlackUsers().then((res) => {
+      restService.getSlackUsers().then((res) => {
         if (res.status === 200) {
           this.slackUsers = res.data.data
           this.autocompleteSlackUsers()
