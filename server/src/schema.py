@@ -14,7 +14,10 @@ class Team(Base):
 
     @hybrid_property
     def submissions(self):
-        return sum([user.submissions for user in self.members])
+        submissions = []
+        for user in self.members:
+            submissions.extend(user.submissions)
+        return submissions
 
     @hybrid_property
     def score(self):
@@ -76,19 +79,14 @@ class Submission(Base):
     challenge = relationship("Challenge", back_populates="submissions")
     challenge_id = Column(Integer, ForeignKey('challenges.identifier'))
 
-    @hybrid_property
-    def team(self):
-        return self.user.team
-
     def __repr__(self):
-        return "<Submission(id={}, user='{}', content='{}', challenge={}, team={})>".format(
-                                                                                            self.identifier,
-                                                                                            self.user_name,
-                                                                                            self.content,
-                                                                                            self.challenge_id,
-                                                                                            self.team.name
-                                                                                           )
+        return "<Submission(id={}, user='{}', content='{}', challenge={})>".format(
+                                                                                    self.identifier,
+                                                                                    self.user_name,
+                                                                                    self.content,
+                                                                                    self.challenge_id
+                                                                                   )
 
 
-
-Base.metadata.create_all(engine)
+if __name__ == "__main__":
+    Base.metadata.create_all(engine)
