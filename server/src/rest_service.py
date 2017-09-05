@@ -4,8 +4,8 @@ from schema import User, Team
 
 
 def slack_users():
-    token_data = {'token': config['slackToken']}
-    return requests.get(config['slackApiUrl'] + '/users.list', params=token_data)
+    token_data = {'token': config['slack_api_token']}
+    return requests.get(config['slack_api_url'] + '/users.list', params=token_data)
 
 
 def app_users(db_session, filters):

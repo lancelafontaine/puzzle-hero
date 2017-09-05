@@ -9,9 +9,9 @@ from sanic.response import HTTPResponse
 ######### GET TESTS ###########
 
 def test_get_heartbeat():
-    assert isinstance(controller.get_heartbeat(), HTTPResponse)
-    assert controller.get_heartbeat().status == 200
-    data = json.loads(controller.get_heartbeat(None).body)
+    assert isinstance(controller.get_heartbeat(mocks.MockRequest), HTTPResponse)
+    assert controller.get_heartbeat(mocks.MockRequest).status == 200
+    data = json.loads(controller.get_heartbeat(mocks.MockRequest).body)
     assert data == {'data': 'hello world', 'ok': True}
 
 def test_get_slack_users_slack_api_error(monkeypatch):
@@ -24,9 +24,9 @@ def test_get_slack_users_slack_api_error(monkeypatch):
                 'members': []
             }
     monkeypatch.setattr(requests, 'get', SlackUsersMock)
-    assert isinstance(controller.get_slack_users(), HTTPResponse)
-    assert controller.get_slack_users().status == 504
-    data = json.loads(controller.get_slack_users().body)
+    assert isinstance(controller.get_slack_users(mocks.MockRequest), HTTPResponse)
+    assert controller.get_slack_users(mocks.MockRequest).status == 504
+    data = json.loads(controller.get_slack_users(mocks.MockRequest).body)
     assert data == {'message': 'Slack API error', 'ok': False}
 
 def test_get_app_users():
@@ -57,9 +57,9 @@ def test_get_slack_users_no_users(monkeypatch):
                 'members': []
             }
     monkeypatch.setattr(requests, 'get', SlackUsersMock)
-    assert isinstance(controller.get_slack_users(), HTTPResponse)
-    assert controller.get_slack_users().status == 200
-    data = json.loads(controller.get_slack_users().body)
+    assert isinstance(controller.get_slack_users(mocks.MockRequest), HTTPResponse)
+    assert controller.get_slack_users(mocks.MockRequest).status == 200
+    data = json.loads(controller.get_slack_users(mocks.MockRequest).body)
     assert data == {'data': [], 'ok': True}
 
 def test_get_slack_users_filters_deleted_and_blacklisted(monkeypatch):
@@ -97,9 +97,9 @@ def test_get_slack_users_filters_deleted_and_blacklisted(monkeypatch):
                 ]
             }
     monkeypatch.setattr(requests, 'get', SlackUsersMock)
-    assert isinstance(controller.get_slack_users(), HTTPResponse)
-    assert controller.get_slack_users().status == 200
-    data = json.loads(controller.get_slack_users().body)
+    assert isinstance(controller.get_slack_users(mocks.MockRequest), HTTPResponse)
+    assert controller.get_slack_users(mocks.MockRequest).status == 200
+    data = json.loads(controller.get_slack_users(mocks.MockRequest).body)
     assert data == {
         'data': [{
             'username': 'real_user',
@@ -153,7 +153,7 @@ def test_add_user(monkeypatch):
                 ]
             }
     monkeypatch.setattr(requests, 'get', SlackUsersMock)
-    response = controller.get_slack_users()
+    response = controller.get_slack_users(mocks.MockRequest)
     assert isinstance(response, HTTPResponse)
     assert response.status == 200
 
@@ -184,15 +184,3 @@ def test_modify_user():
 
 def test_add_challenge():
     controller.add_challenge(None, None)
-
-def test_ok():
-    data = {
-        'hello': 'world'
-    }
-    assert isinstance(controller.ok(data), dict)
-    assert controller.ok(data) == {'ok': True, 'data': {'hello': 'world'}}
-
-def test_error():
-    assert isinstance(controller.error('oops'), dict)
-    assert controller.error('oops') == {'ok': False, 'message': 'oops'}
-

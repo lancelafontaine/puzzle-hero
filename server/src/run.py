@@ -5,7 +5,7 @@ import controller
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-
+from decorators import responds_to_options
 
 app = Sanic(__name__)
 CORS(app, origins=config['allowed_host_list'])
@@ -22,7 +22,12 @@ async def heartbeat(request):
 
 @app.route('/slack-users', methods=['GET'])
 async def slack_users(request):
-    return controller.get_slack_users(request)
+    return controller.get_slack_users(request, db_session)
+
+@app.route('/verify-slack-email', methods=['POST', 'OPTIONS'])
+@responds_to_options()
+async def verify_slack_email(request):
+    return controller.post_verify_slack_email(request, db_session)
 
 
 @app.route('/authenticate-user', methods=['GET'])
@@ -34,28 +39,31 @@ async def authenticate_user(request):
 async def users(request):
     return controller.get_app_users(request.json, db_session)
 
-
 @app.route("/teams", methods=["GET"])
 async def teams(request):
     return controller.get_teams(request.json, db_session)
 
 
-@app.route("/modify-user", methods=["POST"])
+@app.route("/modify-user", methods=["POST", "OPTIONS"])
+@responds_to_options()
 async def modify_user(request):
     return controller.modify_user(request.json, db_session)
 
 
-@app.route("/add-user", methods=["POST"])
+@app.route("/add-user", methods=["POST", "OPTIONS"])
+@responds_to_options()
 async def add_user(request):
     return controller.add_user(request.json, db_session)
 
 
-@app.route("/add-team", methods=["POST"])
+@app.route("/add-team", methods=["POST", "OPTIONS"])
+@responds_to_options()
 async def add_team(request):
     return controller.add_team(request.json, db_session)
 
 
-@app.route("/join-team", methods=["POST"])
+@app.route("/join-team", methods=["POST", "OPTIONS"])
+@responds_to_options()
 async def join_team(request):
     return controller.join_team(request.json, db_session)
 

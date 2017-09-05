@@ -67,3 +67,8 @@ class FaultyCommitDatabase:
 
     def commit(self):
         raise SQLAlchemyError("db simulated failure")
+
+class MockRequest:
+    def __init__(self, request="GET"):
+        self.method = request
+
